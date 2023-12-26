@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Monster.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">scaffold</a> &gt; <a href="index.source.html" class="el_package">WizardTD</a> &gt; <span class="el_source">Monster.java</span></div><h1>Monster.java</h1><pre class="source lang-java linenums">    package WizardTD;
+
+    import processing.core.PImage;
+
+    import java.util.ArrayList;
+
+    /**
+    * Class representing a monster in the game. Extends the Moveable class.
+    */
+    public class Monster extends Moveable implements Damageable {
+<span class="fc" id="L11">        private final float HEALTH_BAR_LENGTH = (float) 29.0;</span>
+<span class="fc" id="L12">        private final float HEALTH_BAR_WIDTH = (float) 2.6;</span>
+
+<span class="fc" id="L14">        private final float HEALTH_BAR_X_OFFSET = (float) -4.5;</span>
+<span class="fc" id="L15">        private final float HEALTH_BAR_Y_OFFSET = (float) -4.5;</span>
+
+        public String type;
+
+<span class="fc" id="L19">        public final float spriteDiameter = 20; // in pixels</span>
+        
+        public float x;
+        public float y;
+
+        public float centreX;
+        public float centreY;
+        
+        public int SPAWN_POINT_INDEX;
+
+<span class="fc" id="L29">        public int pathPointIndex = 0;</span>
+        
+        private float maxHP;
+        public float currentHP;
+
+        private float NORMAL_SPEED;
+        public float armour;
+
+        public float manaGainedOnKill;
+
+        private PImage sprite;
+
+        private App app; // if declare type as PApplet App, then wontwork bc PApplet doesn't have App's variables
+
+        //system vars
+        private boolean lastMoveWasInX;
+        private float lastMoveAmount; // number of pixels, can be + or - depending on direction
+
+        /**
+         * Initializes a Monster object with the specified attributes.
+         *
+         * @param SPAWN_POINT_INDEX The index of the spawn point for the monster.
+         * @param app App instance.
+         * @param type The type of the monster.
+         * @param maxHP The maximum health points of the monster.
+         * @param NORMAL_SPEED The normal movement speed of the monster.
+         * @param armour The armour value (damage multiplier) of the monster.
+         * @param manaGainedOnKill The raw amount of mana gained when the monster is killed.
+         */
+<span class="fc" id="L58">        public Monster(int SPAWN_POINT_INDEX, App app, String type, float maxHP, float NORMAL_SPEED, float armour, float manaGainedOnKill) { // initMazeX and initMazeY are indexes in the 'maze' 2D array </span>
+<span class="fc" id="L59">            this.SPAWN_POINT_INDEX = SPAWN_POINT_INDEX;</span>
+<span class="fc" id="L60">            this.app = app;</span>
+<span class="fc" id="L61">            this.type = type;</span>
+
+            try {
+<span class="fc" id="L64">                this.x = app.spawnPoints.get(SPAWN_POINT_INDEX)[0];</span>
+<span class="fc" id="L65">                this.y = app.spawnPoints.get(SPAWN_POINT_INDEX)[1];</span>
+<span class="fc" id="L66">            } catch (Exception e) {</span>
+                // if testing, spawnPoints will be empty List
+                // set arbitrary coords
+<span class="fc" id="L69">                this.x = 0;</span>
+<span class="fc" id="L70">                this.y = 0;</span>
+<span class="fc" id="L71">                this.centreX = x + spriteDiameter/2 + 6;</span>
+<span class="fc" id="L72">                this.centreY = y + spriteDiameter/2 + 6;</span>
+
+<span class="fc" id="L74">            }</span>
+            
+            
+<span class="fc" id="L77">            sprite = app.gremlinSprite;</span>
+<span class="fc bfc" id="L78" title="All 2 branches covered.">            if (type.equals(&quot;worm&quot;)) {</span>
+<span class="fc" id="L79">                sprite = app.wormSprite;</span>
+<span class="pc bpc" id="L80" title="1 of 2 branches missed.">            } else if (type.equals(&quot;beetle&quot;)) {</span>
+<span class="nc" id="L81">                sprite = app.beetleSprite;</span>
+<span class="nc" id="L82">                sprite.resize(0,20);</span>
+            }
+            
+<span class="fc" id="L85">            this.maxHP = maxHP;</span>
+<span class="fc" id="L86">            this.currentHP = maxHP;</span>
+<span class="fc" id="L87">            this.NORMAL_SPEED = NORMAL_SPEED;</span>
+<span class="fc" id="L88">            this.armour = armour;</span>
+<span class="fc" id="L89">            this.manaGainedOnKill = manaGainedOnKill;</span>
+<span class="fc" id="L90">        }</span>
+
+        /**
+         * Checks whether the monster instance is currently alive (i.e. current health greater than 0)
+         *
+         * @return true if the monster is alive, false otherwise.
+         */
+        public boolean isAlive() {
+<span class="pc bpc" id="L98" title="1 of 2 branches missed.">            return (this.currentHP &gt; 0);</span>
+        }
+
+        /**
+         * Applies damage to the monster instance and takes into account armour multiplier.
+         *
+         * @param rawDamage The amount of damage to be applied to the object, without considering armour yet.
+         */
+        public void takeDamage(double rawDamage) {
+<span class="fc" id="L107">            this.currentHP -= (this.armour * rawDamage);</span>
+<span class="fc" id="L108">        }</span>
+
+        /**
+         * Makes the monster navigate to next point in path
+         *
+         * @param pathPoints The list of path points the monster follows.
+         */
+        private void nextPoint(ArrayList&lt;int[]&gt; pathPoints) {
+<span class="nc bnc" id="L116" title="All 2 branches missed.">            if (this.pathPointIndex &lt; (pathPoints.size() - 1)) {</span>
+<span class="nc" id="L117">                    this.pathPointIndex += 1;</span>
+                } else { // reached wizard house
+<span class="nc" id="L119">                    app.loseMana(this.currentHP);</span>
+<span class="nc" id="L120">                    this.x = app.spawnPoints.get(SPAWN_POINT_INDEX)[0];</span>
+<span class="nc" id="L121">                    this.y = app.spawnPoints.get(SPAWN_POINT_INDEX)[1];</span>
+<span class="nc" id="L122">                    this.pathPointIndex = 0;</span>
+            }
+<span class="nc" id="L124">        }</span>
+
+        /**
+         * Handles logic (update the state of the monster during each game tick)
+         *
+         * @return true if the monster moved in the x-direction (ie horizontally); false otherwise.
+         */
+        @Override
+        public boolean tick() {
+            
+<span class="fc" id="L134">            float speed = NORMAL_SPEED;</span>
+<span class="pc bpc" id="L135" title="1 of 2 branches missed.">            if (app.fastForward) {</span>
+<span class="nc" id="L136">                speed *= 2;</span>
+            }
+
+<span class="fc" id="L139">            centreX = x + (spriteDiameter/2) + app.monsterController.GREMLIN_X_OFFSET;</span>
+<span class="fc" id="L140">            centreY = y + (spriteDiameter/2) + app.monsterController.GREMLIN_Y_OFFSET;</span>
+            
+<span class="fc" id="L142">            ArrayList&lt;int[]&gt; pathPoints = app.allPathsPoints.get(SPAWN_POINT_INDEX);</span>
+            
+<span class="fc" id="L144">            float targetX = pathPoints.get(pathPointIndex)[0];</span>
+<span class="fc" id="L145">            float targetY = pathPoints.get(pathPointIndex)[1];</span>
+
+<span class="fc bfc" id="L147" title="All 2 branches covered.">            if (x != targetX) {</span>
+                
+<span class="fc" id="L149">                float xDiff = targetX - x; // distance between current x and target x</span>
+<span class="fc" id="L150">                float dx = sign(targetX - x) * speed; // number of pixels to move by</span>
+<span class="pc bpc" id="L151" title="1 of 2 branches missed.">                if (Math.abs(dx) &gt; Math.abs(xDiff)) {</span>
+<span class="nc" id="L152">                    dx = xDiff;</span>
+                }
+
+<span class="fc" id="L155">                x += dx;</span>
+<span class="fc" id="L156">                lastMoveWasInX = true;</span>
+<span class="fc" id="L157">                lastMoveAmount = dx;</span>
+
+<span class="pc bpc" id="L159" title="1 of 2 branches missed.">            } else if (y != targetY) {</span>
+<span class="fc" id="L160">                float yDiff = targetY - y;</span>
+<span class="fc" id="L161">                float dy = sign(targetY - y) * speed; // number of pixels to move by</span>
+<span class="pc bpc" id="L162" title="1 of 2 branches missed.">                if (Math.abs(dy) &gt; Math.abs(yDiff)) {</span>
+<span class="nc" id="L163">                    dy = yDiff;</span>
+                }
+
+<span class="fc" id="L166">                y += dy;</span>
+                
+<span class="fc" id="L168">                lastMoveWasInX = false;</span>
+<span class="fc" id="L169">                lastMoveAmount = dy;</span>
+<span class="fc" id="L170">            } else {</span>
+<span class="nc" id="L171">                nextPoint(pathPoints);</span>
+            }
+<span class="fc" id="L173">            this.currentHP = Math.max(0, this.currentHP);</span>
+
+<span class="fc" id="L175">            return lastMoveWasInX;</span>
+        }
+
+        /**
+         * Draws the monster's sprite and health bar on the screen.
+         */
+        @Override
+        public void draw() {
+
+<span class="fc" id="L184">            float drawX = x + app.monsterController.GREMLIN_X_OFFSET; //consistent With Tiles' Top Left Corners</span>
+<span class="fc" id="L185">            float drawY = y + app.monsterController.GREMLIN_Y_OFFSET; //consistent With Tiles' Top Left Corners</span>
+
+<span class="fc" id="L187">            app.image(sprite, drawX, drawY);</span>
+
+<span class="fc" id="L189">            app.strokeWeight(0);</span>
+<span class="fc" id="L190">            app.fill(255, 0, 0);</span>
+<span class="fc" id="L191">            app.rect(drawX + HEALTH_BAR_X_OFFSET, drawY + HEALTH_BAR_Y_OFFSET, this.HEALTH_BAR_LENGTH, this.HEALTH_BAR_WIDTH);</span>
+<span class="fc" id="L192">            app.fill(0, 255, 0);</span>
+<span class="fc" id="L193">            app.rect(drawX + HEALTH_BAR_X_OFFSET, drawY + HEALTH_BAR_Y_OFFSET, (this.HEALTH_BAR_LENGTH * this.currentHP/this.maxHP), this.HEALTH_BAR_WIDTH);</span>
+<span class="fc" id="L194">        }</span>
+        
+    }
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>

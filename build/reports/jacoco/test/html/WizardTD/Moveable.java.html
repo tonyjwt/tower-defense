@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Moveable.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">scaffold</a> &gt; <a href="index.source.html" class="el_package">WizardTD</a> &gt; <span class="el_source">Moveable.java</span></div><h1>Moveable.java</h1><pre class="source lang-java linenums">package WizardTD;
+
+/**
+ * This abstract class provides the basic structure for classes that can move, eg monsters and fireballs.
+ * Subclasses implement the draw() and tick() methods to control rendering and game logic.
+ */
+<span class="fc" id="L7">public abstract class Moveable {</span>
+    protected App app; // A reference to the instance of App
+
+    /**
+     * Implement this method to define the logic for rendering Sprites.
+     */
+    public abstract void draw();
+
+    /**
+     * Implement this method to define logic (e.g. movement, updating state)
+     * @return : for Monster, returns true if moved in x direction, false otherwise. For fireball, returns true if hit monster, false otherwise.
+     */
+    public abstract boolean tick();
+
+    /**
+     * Determines the sign of a number. Able to be used by all classes that extend Moveable.
+     *
+     * @param n The number to determine the sign of.
+     * @return 1 if the number is positive, -1 if it's negative, and 0 if it's zero.
+     */
+    protected int sign(double n) { // define using double not float as parameter to avoid lossy conversion errors
+<span class="fc" id="L28">        return (int) (n / Math.abs(n));</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>

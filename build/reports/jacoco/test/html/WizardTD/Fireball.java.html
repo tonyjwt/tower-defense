@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Fireball.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">scaffold</a> &gt; <a href="index.source.html" class="el_package">WizardTD</a> &gt; <span class="el_source">Fireball.java</span></div><h1>Fireball.java</h1><pre class="source lang-java linenums">package WizardTD;
+
+import processing.core.PImage;
+
+/*
+* Fireball class; defines behaviour of projectiles fired by towers. Extends the Moveable class.
+*/
+public class Fireball extends Moveable {
+    
+<span class="fc" id="L10">    private final float FIREBALL_DIAMETER = 6; // in pixels</span>
+<span class="fc" id="L11">    private float FIREBALL_SPEED = 5; // pixels per frame</span>
+
+    private float x; // for drawing (top left corner of sprite)
+    private float y; // for drawing (top left corner of sprite)
+
+    public float centreX; //centre of fireball
+    public float centreY; //centre of fireball
+
+    public float xDiff;
+    public float yDiff;
+
+    private double damage;
+
+    private PImage sprite;
+
+    private Monster target;
+
+    /**
+     * Initializes a Fireball object with the specified attributes.
+     *
+     * @param centreX The X-coordinate of the center of the fireball.
+     * @param centreY The Y-coordinate of the center of the fireball.
+     * @param target The target Monster that the fireball is aimed at.
+     * @param damage The raw damage inflicted by the fireball not accounting for armour.
+     * @param app App instance
+     */
+<span class="fc" id="L37">    public Fireball(float centreX, float centreY, Monster target, double damage, App app) {</span>
+<span class="fc" id="L38">        this.target = target;</span>
+
+<span class="fc" id="L40">        this.centreX = centreX;</span>
+<span class="fc" id="L41">        this.centreY = centreY;</span>
+
+<span class="fc" id="L43">        this.x = centreX - (FIREBALL_DIAMETER/2);</span>
+<span class="fc" id="L44">        this.y = centreY - (FIREBALL_DIAMETER/2);</span>
+
+<span class="fc" id="L46">        this.damage = damage;</span>
+
+        try {
+<span class="nc" id="L49">            this.sprite = app.loadImage(&quot;src/main/resources/WizardTD/fireball.png&quot;);</span>
+<span class="fc" id="L50">        } catch (Exception e) {</span>
+            // will get exception when testing, since cannot load image. can safely ignore in this case.
+<span class="nc" id="L52">        }</span>
+        
+
+<span class="fc" id="L55">        this.app = app;</span>
+<span class="fc" id="L56">    }</span>
+
+    /**
+     * Handles logic; update the state of the Fireball during each game tick.
+     *
+     * Calculates the movement of the fireball towards its target and
+     * reduces the target's health if the fireball reaches the target.
+     *
+     * @return true if the fireball hit the target and inflicted damage, false otherwise.
+     */
+    @Override
+    public boolean tick() {
+<span class="fc" id="L68">        xDiff = target.centreX - this.centreX;</span>
+<span class="fc" id="L69">        yDiff = target.centreY - this.centreY;</span>
+<span class="fc" id="L70">        double distToTarget = Math.sqrt(Math.pow(xDiff, 2) + Math.pow(yDiff, 2));</span>
+
+<span class="pc bpc" id="L72" title="1 of 2 branches missed.">        if (distToTarget &lt; FIREBALL_SPEED / 2.0) {</span>
+<span class="fc" id="L73">            target.takeDamage(damage);</span>
+<span class="fc" id="L74">            return true;</span>
+        }
+
+<span class="nc" id="L77">        double dx = xDiff / distToTarget * FIREBALL_SPEED; // amount to move by in x dir</span>
+<span class="nc" id="L78">        double dy = yDiff / distToTarget * FIREBALL_SPEED; // amount to move by in y dir</span>
+
+<span class="nc" id="L80">        this.centreX += dx;</span>
+<span class="nc" id="L81">        this.centreY += dy;</span>
+
+<span class="nc" id="L83">        this.x = centreX - (FIREBALL_DIAMETER/2);</span>
+<span class="nc" id="L84">        this.y = centreY - (FIREBALL_DIAMETER/2);</span>
+
+<span class="nc" id="L86">        return false;</span>
+    }
+
+    /**
+     * Draws the Fireball by displaying its sprite at the current position.
+     */
+    @Override
+    public void draw() {
+        try {
+<span class="nc" id="L95">            app.image(this.sprite, x, y);</span>
+<span class="nc" id="L96">        } catch (Exception e) {</span>
+            // if testing, will get exception, can safely ignore.
+<span class="nc" id="L98">        }</span>
+        
+<span class="nc" id="L100">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>

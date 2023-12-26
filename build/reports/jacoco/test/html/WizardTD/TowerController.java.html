@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>TowerController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">scaffold</a> &gt; <a href="index.source.html" class="el_package">WizardTD</a> &gt; <span class="el_source">TowerController.java</span></div><h1>TowerController.java</h1><pre class="source lang-java linenums">package WizardTD;
+
+import processing.data.JSONObject;
+import processing.data.JSONArray;
+
+import java.io.*;
+import java.lang.reflect.Array;
+import java.util.*;
+
+
+import java.util.LinkedList;
+
+/**
+ * Class responsible for managing and controlling towers in the game.  Extends the Controller class.
+ */
+public class TowerController extends Controller {
+    public int initTowerRange;
+    public float initTowerFiringSpeed;
+    public int initTowerDamage;
+    public int currentHoverTowerIndex;
+    public LinkedList&lt;Tower&gt; towers;
+
+    private JSONObject configJson;
+
+    private Tower tempTower;
+    
+
+    /**
+     * Initializes the TowerController with the provided application context.
+     *
+     * @param app Instance of App
+     */
+<span class="fc" id="L33">    public TowerController(App app) {</span>
+
+<span class="fc" id="L35">        this.app = app;</span>
+
+<span class="fc" id="L37">        this.towers = new LinkedList&lt;&gt;();</span>
+
+<span class="fc" id="L39">        this.configJson = app.configJson;</span>
+        try {
+<span class="fc" id="L41">            this.initTowerDamage = configJson.getInt(&quot;initial_tower_damage&quot;);</span>
+<span class="fc" id="L42">            this.initTowerFiringSpeed = configJson.getFloat(&quot;initial_tower_firing_speed&quot;);</span>
+<span class="fc" id="L43">            this.initTowerRange = configJson.getInt(&quot;initial_tower_range&quot;);</span>
+<span class="fc" id="L44">        } catch (Exception e) {</span>
+            // if testing, will get RuntimeException, can ignore. 
+<span class="fc" id="L46">        }</span>
+        
+<span class="fc" id="L48">    }</span>
+
+    /**
+     * Draws all towers and their attack ranges (if hovered)
+     */
+    @Override
+    public void draw() {
+<span class="pc bpc" id="L55" title="1 of 2 branches missed.">        for (int i = 0; i &lt; towers.size(); i++) {</span>
+            try {
+<span class="nc" id="L57">                tempTower = towers.get(i);</span>
+<span class="nc bnc" id="L58" title="All 2 branches missed.">                if (i == currentHoverTowerIndex) {</span>
+<span class="nc" id="L59">                    tempTower.drawRange = true;</span>
+                } else {
+<span class="nc" id="L61">                    tempTower.drawRange = false;</span>
+                }
+<span class="nc" id="L63">                tempTower.draw();</span>
+<span class="nc" id="L64">            } catch (ArrayIndexOutOfBoundsException e) {</span>
+<span class="nc" id="L65">                return;</span>
+<span class="nc" id="L66">            }</span>
+        }
+<span class="fc" id="L68">    }</span>
+
+    /**
+     * Updates the state of all towers by calling update() on each tower
+     */
+    @Override
+    public void tick() {
+<span class="pc bpc" id="L75" title="1 of 2 branches missed.">        for (int i = 0; i &lt; towers.size(); i++) {</span>
+            try {
+<span class="nc" id="L77">                tempTower = towers.get(i);</span>
+<span class="nc" id="L78">                tempTower.tick();</span>
+<span class="nc" id="L79">            } catch (ArrayIndexOutOfBoundsException e) {</span>
+<span class="nc" id="L80">                return;</span>
+<span class="nc" id="L81">            }</span>
+        }
+<span class="fc" id="L83">    }</span>
+
+    /**
+     * Adds a tower to the list of managed towers.
+     *
+     * @param tower The Tower instance to be added.
+     */
+    public void addTower(Tower tower) {
+<span class="fc" id="L91">        towers.add(tower);</span>
+<span class="fc" id="L92">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>
