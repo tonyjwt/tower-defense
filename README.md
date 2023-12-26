@@ -6,11 +6,11 @@ Final assignment for an Object-Oriented Programming unit.
 ## Table of Contents
 
 - [Usage](#usage)
-- [Gameplay Screenshots](#screenshots)
+- [Gameplay Screenshots](#gameplay-screenshots)
 
 ## Usage
 To run the project, simply download all files in this repository excluding the "gameplay-screenshots" folder; save all downloaded files into a single folder; open this single folder in an IDE such as Visual Studio Code. Make sure Gradle is installed. Open a new terminal, and run the command `gradle run` to execute the program.
 
 
 ## Gameplay Screenshots
-![Gameplay screenshot](images/Gameplay.png)
+![Gameplay screenshot](gameplay-screenshots/Gameplay.png)
